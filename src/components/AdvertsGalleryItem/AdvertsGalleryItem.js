@@ -13,8 +13,19 @@ import {
   AdvertsModelName,
   AdvertsSecondInfoBclock,
   AdvertsSecondInfoTextContent,
+  FuelAndEnginePar,
+  CarDescription,
+  BlockTitle,
+  AccAndFuncText,
+  RentalCondList,
+  ModalImg,
+  RentalCondListItem,
+  RentalButton,
+  ModalContainer,
+  CloseModalButton,
 } from './AdvertsGalleryItem.styled';
 import heart from '../../heart.svg';
+import closeIcon from '../../close-icon.svg';
 
 import { fetchCars } from '../../redux/operations';
 import { selectCars } from '../../redux/selectors';
@@ -26,11 +37,11 @@ const customStyles = {
     left: '50%',
     right: 'auto',
     bottom: 'auto',
-    width: '540px',
-    height: '750px',
+    width: '460px',
+    padding: '40px',
     borderRadius: '24px',
     background: '#FFF',
-    marginRight: '-50%',
+    // marginRight: '-50%',
     transform: 'translate(-50%, -50%)',
   },
   overlay: {
@@ -44,23 +55,26 @@ export const defaultImg =
 
 export const AdvertsGalleryItem = () => {
   const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(12);
+  const [limit] = useState(12);
   const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [selectedCar, setSelectedCar] = useState(null);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(fetchCars());
-  }, [dispatch]);
+    dispatch(fetchCars({ page, limit }));
+  }, [dispatch, page, limit]);
 
   const cars = useSelector(selectCars);
-  console.log(cars);
 
+  const openModal = car => {
+    setSelectedCar(car);
+    setModalIsOpen(true);
+  };
   const closeModal = () => setModalIsOpen(false);
 
-  // const loadMoreAdverts = () => {
-  //   setPage(page + 1);
-  //   console.log(page);
-  // };
+  const loadMoreAdverts = () => {
+    setPage(page + 1);
+  };
   return (
     <AdvertsContainer>
       <AdvertsList>
@@ -88,24 +102,119 @@ export const AdvertsGalleryItem = () => {
                 {car.functionalities[0].split(' ').length > 1 ? '...' : ''}
               </AdvertsSecondInfoTextContent>
             </AdvertsSecondInfoBclock>
-            <LearnButton onClick={() => setModalIsOpen(true)}>
-              Learn more
-            </LearnButton>
-
-            <Modal
-              isOpen={modalIsOpen}
-              style={customStyles}
-              onRequestClose={closeModal}
-              contentLabel="Example Modal"
-            >
-              <h2>тут буде модалка</h2>
-
-              <button onClick={closeModal}>закрыть</button>
-            </Modal>
+            <LearnButton onClick={() => openModal(car)}>Learn more</LearnButton>
           </AdvertsCard>
         ))}
       </AdvertsList>
-      <LoadMoreButton>Load more</LoadMoreButton>
+      {modalIsOpen && selectedCar && (
+        <Modal
+          isOpen={modalIsOpen}
+          style={customStyles}
+          onRequestClose={closeModal}
+          contentLabel="Example Modal"
+        >
+          <CloseModalButton type="button" onClick={closeModal}>
+            <img src={closeIcon} alt="" />
+          </CloseModalButton>
+          <ModalContainer>
+            <div>
+              <ModalImg
+                src={selectedCar.img || defaultImg}
+                alt={selectedCar.make}
+              />
+            </div>
+            <div>
+              <AdvertsFirstInfoBclock>
+                <AdvertsFirstInfoTextContent>
+                  {selectedCar.make}{' '}
+                  <AdvertsModelName>{selectedCar.model}</AdvertsModelName>,{' '}
+                  {selectedCar.year}
+                </AdvertsFirstInfoTextContent>
+              </AdvertsFirstInfoBclock>
+
+              <AdvertsSecondInfoTextContent>
+                {selectedCar.address.split(',').slice(-2).join(' | ')} | Id:{' '}
+                {selectedCar.id} | Year: {selectedCar.year} | Type:{' '}
+                {selectedCar.type}
+                <FuelAndEnginePar>
+                  Fuel Consumption: {selectedCar.fuelConsumption} | Engine Size:{' '}
+                  {selectedCar.engineSize}
+                </FuelAndEnginePar>
+              </AdvertsSecondInfoTextContent>
+
+              <div>
+                <CarDescription>{selectedCar.description}</CarDescription>
+              </div>
+
+              <div>
+                <BlockTitle>Accessories and functionalities:</BlockTitle>
+                <div>
+                  {selectedCar.accessories.map((acc, index) => (
+                    <AccAndFuncText key={index}>
+                      {acc}{' '}
+                      {index !== selectedCar.accessories.length - 1 && '| '}
+                    </AccAndFuncText>
+                  ))}
+                </div>
+                <div>
+                  {selectedCar.functionalities.map((fun, index) => (
+                    <AccAndFuncText key={index}>
+                      {fun}{' '}
+                      {index !== selectedCar.functionalities.length - 1 && '| '}
+                    </AccAndFuncText>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <BlockTitle>Rental Conditions:</BlockTitle>
+                <RentalCondList>
+                  {selectedCar.rentalConditions
+                    .split('\n')
+                    .map((line, index) => (
+                      <RentalCondListItem key={index}>
+                        {line.split(/\b(\d+)\b/).map((part, partIndex) =>
+                          isNaN(part) ? (
+                            <span key={partIndex}>{part}</span>
+                          ) : (
+                            <span
+                              key={partIndex}
+                              style={{ color: '#3470FF', fontWeight: '600' }}
+                            >
+                              {'\u00A0'}
+                              {part}
+                            </span>
+                          )
+                        )}
+                      </RentalCondListItem>
+                    ))}
+                  <RentalCondListItem>
+                    Mileage:{'\u00A0'}
+                    <span style={{ color: '#3470FF', fontWeight: '600' }}>
+                      {selectedCar.mileage &&
+                        selectedCar.mileage.toString().slice(0, 1) +
+                          ',' +
+                          selectedCar.mileage.toString().slice(1)}
+                    </span>
+                  </RentalCondListItem>
+                  <RentalCondListItem>
+                    Price:{'\u00A0'}
+                    <span style={{ color: '#3470FF', fontWeight: '600' }}>
+                      {selectedCar.rentalPrice}
+                    </span>
+                  </RentalCondListItem>
+                </RentalCondList>
+              </div>
+            </div>
+          </ModalContainer>
+
+          <RentalButton href={'tel:$+380730000000'} className="rental-button">
+            Rental car
+          </RentalButton>
+        </Modal>
+      )}
+
+      <LoadMoreButton onClick={loadMoreAdverts}>Load more</LoadMoreButton>
     </AdvertsContainer>
   );
 };
