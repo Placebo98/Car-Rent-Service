@@ -1,10 +1,17 @@
 import styled from 'styled-components';
+
+export const ModalContainer = styled.div`
+  position: relative;
+  max-width: 100%;
+`;
+
 export const AdvertsContainer = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
 `;
+
 export const AdvertsList = styled.ul`
   list-style: none;
   display: grid;
@@ -15,11 +22,13 @@ export const AdvertsList = styled.ul`
   margin-top: 40px;
   margin-bottom: 100px;
 `;
+
 export const AdvertsCard = styled.li`
   position: relative;
   width: 274px;
   height: 426px;
 `;
+
 export const AdvertsImg = styled.img`
   display: block;
   width: 100%;
@@ -58,6 +67,7 @@ export const AdvertsModelName = styled.span`
 `;
 
 export const AdvertsSecondInfoBclock = styled.div`
+  margin: 0;
   margin-top: 8px;
   margin-bottom: 28px;
   display: flex;
@@ -118,9 +128,8 @@ export const LearnButton = styled.button`
 export const LoadMoreButton = styled.button`
   cursor: pointer;
   outline: none;
-  border-radius: 20px;
+  border: none;
   margin-bottom: 150px;
-  border-color: blue;
   background-color: transparent;
   color: #3470ff;
   font-family: Manrope;
@@ -129,26 +138,6 @@ export const LoadMoreButton = styled.button`
   font-weight: 500;
   line-height: 1.5;
   text-decoration-line: underline;
-  &:hover {
-    color: red;
-    border-color: red;
-  }
-`;
-export const NoMoreAdverts = styled.div`
-  margin: 0;
-  color: #121417;
-  font-family: Manrope;
-  font-size: 50px;
-  font-style: normal;
-  font-weight: 600;
-  line-height: 1.4;
-  margin-top: 24px;
-  margin-bottom: 8px;
-`;
-
-export const ModalContainer = styled.div`
-  position: relative;
-  max-width: 100%;
 `;
 
 export const ModalImg = styled.img`
@@ -256,4 +245,37 @@ export const CloseModalButton = styled.button`
   outline: none;
   width: 24px;
   height: 24px;
+`;
+
+export const FavoritePageCont = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+`;
+
+export const FavoritePageTitle = styled.h1`
+  display: block;
+  margin: 0 auto;
+  color: #121417;
+  font-family: Manrope;
+  font-size: 40px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 1.4;
+  margin-top: 24px;
+  margin-bottom: 8px;
+`;
+
+export const NoFavoritesCar = styled.div`
+  display: flex;
+  justify-content: center;
+  margin: 0;
+  color: #121417;
+  font-family: Manrope;
+  font-size: 30px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 1.4;
+  margin-top: 24px;
+  margin-bottom: 8px;
 `;

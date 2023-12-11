@@ -18,6 +18,7 @@ import {
   BlockTitle,
   AccAndFuncText,
   RentalCondList,
+  NoMoreAdverts,
   ModalImg,
   RentalCondListItem,
   RentalButton,
@@ -220,8 +221,13 @@ export const AdvertsGalleryItem = () => {
           </RentalButton>
         </Modal>
       )}
+      {cars.length > 0 ? (
+        <LoadMoreButton onClick={loadMoreAdverts}>Load more</LoadMoreButton>
+      ) : (
+        <NoMoreAdverts>No more cars!</NoMoreAdverts>
+      )}
 
-      <LoadMoreButton onClick={loadMoreAdverts}>Load more</LoadMoreButton>
+      {/* <LoadMoreButton onClick={loadMoreAdverts}>Load more</LoadMoreButton> */}
     </AdvertsContainer>
   );
 };
