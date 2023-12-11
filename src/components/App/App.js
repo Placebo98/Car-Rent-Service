@@ -9,12 +9,13 @@ export const App = () => {
     <div>
       <Header />
       <hr />
-
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/catalog" element={<CatalogPage />} />
-        <Route path="/favorites" element={<FavoritesPage />} />
-      </Routes>
+      <div>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/catalog" element={<CatalogPage />} />
+          <Route path="/favorites" element={<FavoritesPage />} />
+        </Routes>
+      </div>
     </div>
   );
 };

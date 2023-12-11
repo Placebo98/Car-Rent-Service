@@ -3,20 +3,20 @@ import { fetchCars } from './operations';
 
 const handleFetchCarsFulfilled = (state, action) => {
   state.cars = action.payload;
+  state.initialCars = action.payload;
 };
 
 const initialState = {
   cars: [],
+  initialCars: [],
   filter: {
     make: '',
     price: '',
     from: '',
     to: '',
   },
-  filteredCars: [],
+
   favoriteCars: [],
-  isModalOn: false,
-  modalCar: '',
 };
 
 export const slice = createSlice({
@@ -24,32 +24,35 @@ export const slice = createSlice({
   initialState,
   reducers: {
     setCars(state, action) {
-      state.cars = action.payload;
+      state.cars = [...state.cars, ...action.payload];
+      state.initialCars = [...state.cars, ...action.payload];
     },
     setFilter(state, action) {
-      state.filter = action.payload;
-    },
-    setFilteredCars(state, action) {
-      state.filteredCars = [...action.payload];
+      state.filter = { ...state.filter, ...action.payload };
+
+      const filteredCars = state.initialCars.filter(
+        car => car.make === state.filter.make
+      );
+      state.cars = [...filteredCars];
     },
     clearFilter(state, _) {
       state.filter = initialState.filter;
+      state.cars = [...state.initialCars];
     },
     addFavorite(state, action) {
-      const favorites = [...state.favoriteCars];
+      const selectedCar = action.payload;
 
-      if (favorites.indexOf(action.payload) > -1) {
-        favorites.splice(favorites.indexOf(action.payload), 1);
-        state.favoriteCars = [...favorites];
+      const isFavorite = state.favoriteCars.some(
+        car => car.id === selectedCar.id
+      );
+
+      if (isFavorite) {
+        state.favoriteCars = state.favoriteCars.filter(
+          car => car.id !== selectedCar.id
+        );
       } else {
-        state.favoriteCars = [...state.favoriteCars, action.payload];
+        state.favoriteCars.push(selectedCar);
       }
-    },
-    setModal(state, action) {
-      state.isModalOn = action.payload;
-    },
-    setModalCar(state, action) {
-      state.modalCar = action.payload;
     },
   },
   extraReducers: builder => {
@@ -57,12 +60,5 @@ export const slice = createSlice({
   },
 });
 
-export const {
-  setCars,
-  setFilter,
-  setFilteredCars,
-  clearFilter,
-  addFavorite,
-  setModal,
-  setModalCar,
-} = slice.actions;
+export const { setCars, setFilter, setFilteredCars, clearFilter, addFavorite } =
+  slice.actions;

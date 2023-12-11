@@ -26,10 +26,12 @@ import {
 } from './AdvertsGalleryItem.styled';
 import heart from '../../heart.svg';
 import closeIcon from '../../close-icon.svg';
+import activeHeart from '../../active-heart.svg';
 
 import { fetchCars } from '../../redux/operations';
-import { selectCars } from '../../redux/selectors';
+import { selectCars, selectFavoriteCars } from '../../redux/selectors';
 import { useDispatch, useSelector } from 'react-redux';
+import { addFavorite } from '../../redux/carsSlice';
 
 const customStyles = {
   content: {
@@ -41,7 +43,7 @@ const customStyles = {
     padding: '40px',
     borderRadius: '24px',
     background: '#FFF',
-    // marginRight: '-50%',
+    marginRight: '-50%',
     transform: 'translate(-50%, -50%)',
   },
   overlay: {
@@ -58,13 +60,14 @@ export const AdvertsGalleryItem = () => {
   const [limit] = useState(12);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [selectedCar, setSelectedCar] = useState(null);
+  const cars = useSelector(selectCars);
+  const favoriteCars = useSelector(selectFavoriteCars);
+
   const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(fetchCars({ page, limit }));
   }, [dispatch, page, limit]);
-
-  const cars = useSelector(selectCars);
 
   const openModal = car => {
     setSelectedCar(car);
@@ -75,13 +78,21 @@ export const AdvertsGalleryItem = () => {
   const loadMoreAdverts = () => {
     setPage(page + 1);
   };
+  const handleFavoriteButtonClick = car => {
+    dispatch(addFavorite(car));
+  };
+
+  const isFavorite = selectedCar => {
+    return favoriteCars.some(car => car.id === selectedCar.id);
+  };
+
   return (
     <AdvertsContainer>
       <AdvertsList>
         {cars.map(car => (
           <AdvertsCard key={car.id}>
-            <FavoriteButton>
-              <img src={heart} alt="heart" />
+            <FavoriteButton onClick={() => handleFavoriteButtonClick(car)}>
+              <img src={isFavorite(car) ? activeHeart : heart} alt="heart" />
             </FavoriteButton>
             <AdvertsImg src={car.img || defaultImg} alt={car.make} />
             <AdvertsFirstInfoBclock>
@@ -133,9 +144,8 @@ export const AdvertsGalleryItem = () => {
               </AdvertsFirstInfoBclock>
 
               <AdvertsSecondInfoTextContent>
-                {selectedCar.address.split(',').slice(-2).join(' | ')} | Id:{' '}
-                {selectedCar.id} | Year: {selectedCar.year} | Type:{' '}
-                {selectedCar.type}
+                {selectedCar.address.split(',').slice(-2).join(' | ')} | Year:{' '}
+                {selectedCar.year} | Type: {selectedCar.type}
                 <FuelAndEnginePar>
                   Fuel Consumption: {selectedCar.fuelConsumption} | Engine Size:{' '}
                   {selectedCar.engineSize}
@@ -191,10 +201,7 @@ export const AdvertsGalleryItem = () => {
                   <RentalCondListItem>
                     Mileage:{'\u00A0'}
                     <span style={{ color: '#3470FF', fontWeight: '600' }}>
-                      {selectedCar.mileage &&
-                        selectedCar.mileage.toString().slice(0, 1) +
-                          ',' +
-                          selectedCar.mileage.toString().slice(1)}
+                      {selectedCar.mileage}
                     </span>
                   </RentalCondListItem>
                   <RentalCondListItem>

@@ -1,26 +1,3 @@
-// import {
-//   CarMakeFilterWrapper,
-//   CarMakeFilterLabel,
-//   CarMakeFilterSelect,
-//   CarMakeFilterOption,
-// } from './CarMakeFilter.styled';
-
-// export const CarMakeFilter = () => {
-//   return (
-//     <CarMakeFilterWrapper>
-//       {' '}
-//       <CarMakeFilterLabel htmlFor="carBrand">Car brand</CarMakeFilterLabel>
-//       <CarMakeFilterSelect id="carBrand" name="carBrand">
-//         <CarMakeFilterOption value="baseBrand">
-//           Enter the text
-//         </CarMakeFilterOption>
-//         <CarMakeFilterOption value="option2"> 2</CarMakeFilterOption>
-//         <CarMakeFilterOption value="option3"> 3</CarMakeFilterOption>
-//       </CarMakeFilterSelect>
-//     </CarMakeFilterWrapper>
-//   );
-// };
-
 import {
   CarMakeFilterWrapper,
   CarMakeFilterLabel,
@@ -28,15 +5,25 @@ import {
   CarMakeFilterBaseOption,
   CarMakeFilterOption,
 } from './CarMakeFilter.styled';
-
+import { useDispatch } from 'react-redux';
+import { setFilter } from '../../redux/carsSlice';
 import makes from '../makes.json';
 
 export const CarMakeFilter = () => {
+  const dispatch = useDispatch();
+
+  const handleFilterChange = selectedMake => {
+    dispatch(setFilter({ make: selectedMake }));
+  };
   return (
     <CarMakeFilterWrapper>
       {' '}
-      <CarMakeFilterLabel htmlFor="carBrand">Car brand</CarMakeFilterLabel>
-      <CarMakeFilterSelect id="carMake" name="carMake">
+      <CarMakeFilterLabel htmlFor="carMake">Car brand</CarMakeFilterLabel>
+      <CarMakeFilterSelect
+        id="carMake"
+        name="carMake"
+        onChange={event => handleFilterChange(event.target.value)}
+      >
         <CarMakeFilterBaseOption value="">
           Enter the text
         </CarMakeFilterBaseOption>
