@@ -26,17 +26,11 @@ export const HeaderNavListLink = styled(Link)`
   transition: color 200ms linear, font-size 200ms linear,
     box-shadow 200ms linear;
   &:hover {
-    color: #696969;
+    color: gold;
     font-size: 25px;
   }
   &:focus {
-    color: #696969;
-    font-size: 25px;
-    box-shadow: rgba(0, 0, 0, 0.75) 3px 4px 8px -1px;
-    border-radius: 4px;
-    background-color: #ffffff;
-    border-radius: 15px;
-    padding: 10px;
+    color: gold;
   }
 `;
 
@@ -49,7 +43,7 @@ export const ContactPhoneLink = styled.a`
   transition: color 200ms linear, font-size 200ms linear,
     box-shadow 200ms linear;
   &:hover {
-    color: #696969;
+    color: gold;
     font-size: 20px;
   }
 `;

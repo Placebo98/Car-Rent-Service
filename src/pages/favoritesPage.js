@@ -23,7 +23,6 @@ import {
   ModalContainer,
   CloseModalButton,
   FavoritePageCont,
-  FavoritePageTitle,
   NoFavoritesCar,
 } from './favoritesPage.styled';
 import heart from '../heart.svg';
@@ -79,8 +78,6 @@ const FavoritesPage = () => {
   };
   return (
     <FavoritePageCont>
-      <FavoritePageTitle>Your Favorite Adverts</FavoritePageTitle>
-
       {favoriteCars.length !== 0 ? (
         <AdvertsContainer>
           <AdvertsList>
