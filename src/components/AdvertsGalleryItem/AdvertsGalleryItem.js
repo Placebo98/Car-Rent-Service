@@ -1,51 +1,111 @@
-import { fetchAdverts } from '../services';
 import { useState, useEffect } from 'react';
+import Modal from 'react-modal';
 import {
+  LearnButton,
+  LoadMoreButton,
+  FavoriteButton,
   AdvertsContainer,
   AdvertsList,
   AdvertsCard,
   AdvertsImg,
   AdvertsFirstInfoBclock,
-  AdvertsMakeName,
+  AdvertsFirstInfoTextContent,
+  AdvertsModelName,
+  AdvertsSecondInfoBclock,
+  AdvertsSecondInfoTextContent,
 } from './AdvertsGalleryItem.styled';
+import heart from '../../heart.svg';
+
+import { fetchCars } from '../../redux/operations';
+import { selectCars } from '../../redux/selectors';
+import { useDispatch, useSelector } from 'react-redux';
+
+const customStyles = {
+  content: {
+    top: '50%',
+    left: '50%',
+    right: 'auto',
+    bottom: 'auto',
+    width: '540px',
+    height: '750px',
+    borderRadius: '24px',
+    background: '#FFF',
+    marginRight: '-50%',
+    transform: 'translate(-50%, -50%)',
+  },
+  overlay: {
+    background: 'rgba(18, 20, 23, 0.50)',
+  },
+};
+
+Modal.setAppElement('#root');
+export const defaultImg =
+  'https://indasil.club/uploads/posts/2022-11/1669827770_1-indasil-club-p-risunok-karandashom-mashinka-dlya-detei-pi-1.jpg';
 
 export const AdvertsGalleryItem = () => {
-  const [adverts, setAdverts] = useState([]);
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(12);
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    const getAdverts = async () => {
-      const adverts = await fetchAdverts();
-      setAdverts(adverts);
-    };
-    getAdverts();
-  }, []);
+    dispatch(fetchCars());
+  }, [dispatch]);
 
+  const cars = useSelector(selectCars);
+  console.log(cars);
+
+  const closeModal = () => setModalIsOpen(false);
+
+  // const loadMoreAdverts = () => {
+  //   setPage(page + 1);
+  //   console.log(page);
+  // };
   return (
     <AdvertsContainer>
       <AdvertsList>
-        {adverts.map(advert => (
-          <AdvertsCard key={advert.id}>
-            <AdvertsImg src={advert.img} alt={advert.make} />
+        {cars.map(car => (
+          <AdvertsCard key={car.id}>
+            <FavoriteButton>
+              <img src={heart} alt="heart" />
+            </FavoriteButton>
+            <AdvertsImg src={car.img || defaultImg} alt={car.make} />
             <AdvertsFirstInfoBclock>
-              <AdvertsMakeName>{advert.make}</AdvertsMakeName>
-              <span>{advert.model}</span>,<span>{advert.year}</span>
-              <span>{advert.rentalPrice}</span>
+              <AdvertsFirstInfoTextContent>
+                {car.make} <AdvertsModelName>{car.model}</AdvertsModelName>,{' '}
+                {car.year}
+              </AdvertsFirstInfoTextContent>
+              <span>{car.rentalPrice}</span>
             </AdvertsFirstInfoBclock>
-            <div>
-              <p>
-                {advert.address.split(',').slice(-2).join(' | ')} |{' '}
-                {advert.rentalCompany}
-              </p>
-              <p>
-                {advert.type} | {advert.model} | {advert.id} |{' '}
-                {advert.functionalities[0].split(' ').slice(0, 1).join(' ')}
-                {advert.functionalities[0].split(' ').length > 1 ? '...' : ''}
-              </p>
-            </div>
-            <button>Learn more</button>
+            <AdvertsSecondInfoBclock>
+              <AdvertsSecondInfoTextContent>
+                {car.address.split(',').slice(-2).join(' | ')} |{' '}
+                {car.rentalCompany}
+              </AdvertsSecondInfoTextContent>
+              <AdvertsSecondInfoTextContent>
+                {car.type} | {car.model} | {car.id} |{' '}
+                {car.functionalities[0].split(' ').slice(0, 1).join(' ')}
+                {car.functionalities[0].split(' ').length > 1 ? '...' : ''}
+              </AdvertsSecondInfoTextContent>
+            </AdvertsSecondInfoBclock>
+            <LearnButton onClick={() => setModalIsOpen(true)}>
+              Learn more
+            </LearnButton>
+
+            <Modal
+              isOpen={modalIsOpen}
+              style={customStyles}
+              onRequestClose={closeModal}
+              contentLabel="Example Modal"
+            >
+              <h2>тут буде модалка</h2>
+
+              <button onClick={closeModal}>закрыть</button>
+            </Modal>
           </AdvertsCard>
         ))}
       </AdvertsList>
+      <LoadMoreButton>Load more</LoadMoreButton>
     </AdvertsContainer>
   );
 };
